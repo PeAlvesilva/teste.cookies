@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Exemplo de Cookies Persistentes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      background-color: #f0f0f0;
+    }
+    input, button {
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Sistema de Cookies</h1>
+  <p id="mensagem">Carregando...</p>
+
+  <div id="formulario" style="display: none;">
+    <label>Digite seu nome:</label><br>
+    <input type="text" id="nome" placeholder="Seu nome">
+    <button onclick="salvarCookie()">Salvar</button>
+  </div>
+
+  <button onclick="apagarCookie()" id="btnApagar" style="display:none;">Apagar Nome</button>
+
+  <script>
+    // Cria ou atualiza cookie
+    function setCookie(nome, valor, dias) {
+      const data = new Date();
+      data.setTime(data.getTime() + (dias*24*60*60*1000));
+      const expires = "expires=" + data.toUTCString();
+      document.cookie = nome + "=" + encodeURIComponent(valor) + ";" + expires + ";path=/";
+    }
+
+    // Lê cookie
+    function getCookie(nome) {
+      const nomeIgual = nome + "=";
+      const partes = document.cookie.split(';');
+      for (let i = 0; i < partes.length; i++) {
+        let c = partes[i].trim();
+        if (c.indexOf(nomeIgual) === 0) {
+          return decodeURIComponent(c.substring(nomeIgual.length, c.length));
+        }
+      }
+      return "";
+    }
+
+    // Apaga cookie
+    function apagarCookie() {
+      document.cookie = "usuario=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      location.reload();
+    }
+
+    // Salva nome no cookie
+    function salvarCookie() {
+      const nome = document.getElementById("nome").value;
+      if (nome.trim() !== "") {
+        setCookie("usuario", nome, 7); // dura 7 dias
+        mostrarMensagem(nome);
+      }
+    }
+
+    // Exibe mensagem
+    function mostrarMensagem(nome) {
+      document.getElementById("mensagem").innerText = "Bem-vindo, " + nome + "!";
+      document.getElementById("formulario").style.display = "none";
+      document.getElementById("btnApagar").style.display = "inline-block";
+    }
+
+    // Verifica ao carregar a página
+    window.onload = function() {
+      const usuario = getCookie("usuario");
+      if (usuario !== "") {
+        mostrarMensagem(usuario);
+      } else {
+        document.getElementById("mensagem").innerText = "Olá! Qual é o seu nome?";
+        document.getElementById("formulario").style.display = "block";
+      }
+    }
+  </script>
+
+</body>
+</html>
